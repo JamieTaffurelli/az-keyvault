@@ -1,14 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 2.95"
-    }
-  }
-
-  required_version = "~> 1.1.5"
-}
-
 data "azurerm_log_analytics_workspace" "logs" {
   name                = var.log_analytics_workspace_name
   resource_group_name = var.log_analytics_workspace_resource_group_name
@@ -17,16 +6,25 @@ data "azurerm_log_analytics_workspace" "logs" {
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "encryption" {
-  name                        = var.key_vault_name
-  location                    = azurerm_resource_group.vault.location
-  resource_group_name         = azurerm_resource_group.vault.name
-  enabled_for_disk_encryption = true
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
-  soft_delete_retention_days  = 90
-  purge_protection_enabled    = true
-  enable_rbac_authorization   = false
-  sku_name                    = "standard"
-  tags                        = var.tags
+  name                            = var.key_vault_name
+  location                        = var.location
+  resource_group_name             = var.resource_group_name
+  enabled_for_deployment          = var.enabled_for_deployment
+  enabled_for_disk_encryption     = var.enabled_for_disk_encryption
+  enabled_for_template_deployment = var.enabled_for_template_deployment
+  tenant_id                       = data.azurerm_client_config.current.tenant_id
+  soft_delete_retention_days      = 90
+  purge_protection_enabled        = true
+  enable_rbac_authorization       = var.enable_rbac_authorization
+  sku_name                        = "standard"
+
+  network_acls {
+    bypass                     = var.network_acl_bypass
+    default_action             = var.network_acl_default_action
+    ip_rules                   = var.ip_rules
+    virtual_network_subnet_ids = var.virtual_network_subnet_ids
+  }
+  tags = var.tags
 }
 
 resource "azurerm_monitor_diagnostic_setting" "key_vault_diagnostics" {
