@@ -42,7 +42,7 @@ variable "network_acl_bypass" {
   default = "None"
   validation {
     condition     = contains(["AzureServices", "None"], var.network_acl_bypass)
-    error_message = "Bypass must be AzureServices or None"
+    error_message = "Bypass must be AzureServices or None."
   }
   description = "Allow trusted Azure services to bypass network ACLs"
 }
@@ -53,7 +53,7 @@ variable "network_acl_default_action" {
 
   validation {
     condition     = contains(["Allow", "Deny"], var.network_acl_default_action)
-    error_message = "Bypass must be Allow or Deny"
+    error_message = "Bypass must be Allow or Deny."
   }
   description = "Default action to take if no rule match from IPs or subnets"
 }
